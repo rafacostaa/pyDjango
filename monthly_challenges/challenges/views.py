@@ -1,4 +1,4 @@
-from django.http import HttpResponse, HttpResponseNotFound, HttpResponseRedirect
+from django.http import Http404, HttpResponseNotFound, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
 
@@ -17,7 +17,7 @@ def monthly_challenge_by_number(request, month):
         return HttpResponseNotFound("Page not founded")
 
     redirect_month = months[month - 1]
-    redirect_path = reverse("month-challenge", args=[redirect_month] )
+    redirect_path = reverse("month-challenge", args=[redirect_month])
     return HttpResponseRedirect(redirect_path)
     # return HttpResponseRedirect("/challenges/" + forward_month)
 
@@ -25,17 +25,17 @@ def monthly_challenge_by_number(request, month):
 def monthly_challenge(request, month):
     try:
         challenge_text = monthly_challenges[month]
-        response_data = f"<h1>{challenge_text}</h1>"
-        return HttpResponse(response_data)
+
+        return render(request, "challenges/challenge.html", {
+            "title": "Monthly Challenges",
+            "month_name": challenge_text
+        })
     except:
-        return HttpResponseNotFound("This page is not founded")
-    
+        raise Http404()
+        # return HttpResponseNotFound("This page is not founded")
+
 
 def index(request):
     list_items = ""
     months = list(monthly_challenges.keys())
-    for month in months:
-        month_path = reverse("month-challenge", args=[month])
-        list_items += f"<li><a href=\"{month_path}\">{month}</a></li>"
-    response_data = f"<ul>{list_items}</ul>"
-    return HttpResponse(response_data)
+    return render(request, "challenges/index.html", {"months": months})

@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+
+{% block page_title %}
+    {{title}}
+{% endblock  %}
+
+{% block content %}
+{% include "challenges/partials/header.html"  %}
+    <h1>{{month_name|title}}</h1>
+{% endblock  %}
+
